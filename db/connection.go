@@ -28,7 +28,7 @@ func GetClient() *mongo.Client {
 	return client
 }
 
-func GetCollection(client *mongo.Client, database, collection string) *mongo.Collection {
+func GetCollection(database, collection string) *mongo.Collection {
 	cltn := client.Database(database).Collection(collection)
 	return cltn
 }

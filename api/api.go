@@ -1,11 +1,18 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"cookbook/api/handlers"
+
+	"github.com/gin-gonic/gin"
+)
 
 func InitAPI() *gin.Engine {
 	api := gin.Default()
+	api.Use(handlers.ErrorHandler())
 
-	api.Group("/api/v1/recipes")
+	v1 := api.Group("/api/v1")
+	v1.Any("/recipes", handlers.HandleRecipes)
+	v1.DELETE("/recipes/:id", handlers.DeleteRecipe)
 
 	return api
 }
