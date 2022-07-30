@@ -13,9 +13,9 @@ type Recipe struct {
 	ID           ObjectID          `json:"id,omitempty" bson:"_id,omitempty"`
 	Title        string            `json:"title"`
 	Metadata     map[string]string `json:"metadata"`
-	Ingregients  []Ingredient      `json:"ingredients"`
-	Instructions []Instruction     `json:"instructions"`
-	Notes        []string          `json:"notes,omitempty"`
+	Ingregients  []*Ingredient     `json:"ingredients"`
+	Instructions []*Instruction    `json:"instructions"`
+	Notes        []*string         `json:"notes,omitempty"`
 }
 
 type Ingredient struct {
