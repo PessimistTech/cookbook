@@ -39,7 +39,7 @@ func GetRecipes(ctx *gin.Context) {
 		return
 	}
 
-	var res []models.Recipe
+	var res []db.Recipe
 	err = cursor.All(context.Background(), &res)
 	if err != nil {
 		ctx.Error(NewAPIError(http.StatusInternalServerError, "failed to parse db return", err.Error()))
@@ -52,7 +52,7 @@ func GetRecipes(ctx *gin.Context) {
 func PostRecipe(ctx *gin.Context) {
 	coll := db.GetCollection(database, collection)
 
-	var recipe models.Recipe
+	var recipe models.RecipeData
 	err := json.NewDecoder(ctx.Request.Body).Decode(&recipe)
 	if err != nil {
 		ctx.Error(NewAPIError(http.StatusBadRequest, "failed to read request body", err.Error()))
@@ -66,7 +66,7 @@ func PostRecipe(ctx *gin.Context) {
 	}
 
 	logrus.Infof("RES: %+v", res)
-	recipe.ID = models.ObjectID(res.InsertedID.(primitive.ObjectID).Hex())
+	recipe.ID = res.InsertedID.(primitive.ObjectID).Hex()
 
 	ctx.JSON(http.StatusCreated, recipe)
 
@@ -76,15 +76,23 @@ func DeleteRecipe(ctx *gin.Context) {
 	coll := db.GetCollection(database, collection)
 
 	id := ctx.Param("id")
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		ctx.Error(NewAPIError(http.StatusBadRequest, "invalid recipe ID", err.Error()))
+	}
 
-	//TODO fix the below filter so it actually deletes by ID value.
-	res, err := coll.DeleteOne(context.Background(), bson.M{"_id": id})
+	var recipe db.Recipe
+	err = coll.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&recipe)
+	if err != nil {
+		ctx.Error(NewAPIError(http.StatusBadRequest, "no matching recipe found", err.Error()))
+		return
+	}
+
+	err = recipe.Delete()
 	if err != nil {
 		ctx.Error(NewAPIError(http.StatusBadRequest, "failed to delete recipe", err.Error()))
 		return
 	}
-
-	logrus.Infof("Res: %+v", res)
 
 	ctx.Status(http.StatusOK)
 }

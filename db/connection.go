@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type ObjectID string
+
 var client *mongo.Client
 
 func InitDB() (*mongo.Client, error) {

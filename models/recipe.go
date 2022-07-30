@@ -1,23 +1,21 @@
 package models
 
-type Recipe struct {
-	ID           ObjectID          `json:"id,omitempty" bson:"_id,omitempty"`
+type RecipeData struct {
+	ID           string            `json:"id,omitempty" bson:"-"`
 	Title        string            `json:"title"`
-	Metadata     map[string]string `json:"metadata"`
-	Ingregients  []Ingredient      `json:"ingredients"`
-	Instructions []Instruction     `json:"instructions"`
+	Metadata     map[string]string `json:"metadata,omitempty"`
+	Ingregients  []IngredientData  `json:"ingredients"`
+	Instructions []InstructionData `json:"instructions"`
 	Notes        []string          `json:"notes,omitempty"`
 }
 
-type ObjectID string
-
-type Ingredient struct {
+type IngredientData struct {
 	Quantity   int    `json:"quantity"`
 	Unit       string `json:"unit"`
 	Ingredient string `json:"ingredient"`
 }
 
-type Instruction struct {
+type InstructionData struct {
 	StepNum     int    `json:"stepNum"`
 	Instruction string `json:"instruction"`
 }

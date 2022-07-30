@@ -1,6 +1,9 @@
 package handlers
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+)
 
 type APIError struct {
 	StatusCode int         `json:"status"`
@@ -42,6 +45,7 @@ func ErrorHandlerLogic(errType gin.ErrorType) gin.HandlerFunc {
 					Err:        "unable to process request",
 				}
 			}
+			logrus.WithError(parsedErr).Errorf("failed request to %s", ctx.FullPath())
 			ctx.JSON(parsedErr.StatusCode, parsedErr)
 			ctx.Abort()
 		}
