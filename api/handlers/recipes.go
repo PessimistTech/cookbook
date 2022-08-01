@@ -49,6 +49,26 @@ func GetRecipes(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func GetRecipe(ctx *gin.Context) {
+	id := ctx.Param("id")
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		ctx.Error(NewAPIError(http.StatusBadRequest, "invalid id value", err.Error()))
+		return
+	}
+	coll := db.GetCollection(database, collection)
+
+	var recipe db.Recipe
+	err = coll.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&recipe)
+	if err != nil {
+		ctx.Error(NewAPIError(http.StatusNotFound, "no recipe found", err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, recipe)
+
+}
+
 func PostRecipe(ctx *gin.Context) {
 	coll := db.GetCollection(database, collection)
 

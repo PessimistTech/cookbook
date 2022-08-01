@@ -12,6 +12,7 @@ func InitAPI() *gin.Engine {
 
 	v1 := api.Group("/api/v1")
 	v1.Any("/recipes", handlers.HandleRecipes)
+	v1.GET("/recipes/:id", handlers.GetRecipe)
 	v1.DELETE("/recipes/:id", handlers.DeleteRecipe)
 
 	return api
